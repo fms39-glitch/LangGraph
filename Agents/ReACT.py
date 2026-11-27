@@ -1,3 +1,4 @@
+# ReAct (Reason + Act)
 from typing import Annotated, Sequence, TypedDict
 from dotenv import load_dotenv  
 from langchain_core.messages import BaseMessage # The foundational class for all message types in LangGraph
@@ -18,14 +19,24 @@ class AgentState(TypedDict):
 
 # creating the first tool
 
-@tool
+@tool   # Since the LLM sees this @tool, it just wants a docstring to maintain the proper API specifications for OpenAI. 
 def add(a: int, b: int):
     """This is an addition funtion that adds two numbers"""
 
     return a+b
 # When you put @tool above def add(a: int, b: int):, LangChain inspects your function and converts its name, parameter types (a: int, b: int), and docstring into a JSON schema that gets sent to OpenAI's API.
 
-tools = [add]
+@tool
+def subtract(a: int, b: int):
+    """Subtraction function"""
+    return a - b
+
+@tool
+def multiply(a: int, b: int):
+    """Multiplication function"""
+    return a * b
+
+tools = [add, subtract, multiply]
 
 model = ChatOpenAI(model="gpt-4o").bind_tools(tools)
 
